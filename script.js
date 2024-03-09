@@ -1,59 +1,88 @@
-const zero = document.querySelector('.btn zero')
-const one = document.querySelector('.btn one')
-const two = document.querySelector('.btn two')
-const three = document.querySelector('.btn three')
-const four = document.querySelector('.btn four')
-const five = document.querySelector('.btn five')
-const six = document.querySelector('.btn six')
-const seven = document.querySelector('.btn seven')
-const eight = document.querySelector('.btn eight')
-const nine = document.querySelector('.btn nine')
-const screen = document.querySelector('.screen-text')
-let screenValue = '';
-let firstNumber = '';
-let secondNumber = '';
-let currentOperator = '';
-let result = 0;
+let a = ''; // first number
+let b = '';// second number
+let sign = '';//знак операции
+let finish = false;
 
-function showDisplay(value) {
-    screenValue += value;
-    document.querySelector('.screen-text').textContent = screenValue;
-    // console.log(screenValue)
+const digit = ['0','1','2','3','4','5','6','7','8','9'];
+const action = ['+','-','*','/', '%'];
+
+const out = document.querySelector('.screen-text')
+
+function clearAll() {
+    a = '';
+    b = '';
+    sign = '';
+    finish = false;
+    out.textContent = 0;
 
 }
 
-function setOperator(operator){
-    if (document.querySelector('.screen-text').textContent !== '') {
-        firstNumber = document.querySelector('.screen-text').textContent;
-        currentOperator = operator;
-        document.querySelector('.screen-text').textContent = '';
+document.querySelector('.ac').onclick = clearAll;
+
+document.querySelector('.buttons').onclick = (event)=> {
+    // нажата не кнопка 
+    if(!event.target.classList.contains('btn')) return;
+    // нажата кнопка clearAll ac
+    if(event.target.classList.contains('ac')) return;
+
+    out.textContent = '';
+    // получатю нажатую кнгопку 
+    const key = event.target.textContent;
+
+    if(digit.includes(key)) {
+        if(b === '' && sign === ''){
+            a+= key;
+            console.log(a, b, sign)
+            out.textContent = a;
+
+        }
+        else if ( a !== '' && b !== '' && finish){
+            b = key; 
+            finish = false;
+            out.textContent = b;
+        }
+        else{
+            b+= key;
+            out.textContent = b;
+        }
+        console.log(a, b, sign);
+        return;
     }
-}
+    if(action.includes(key)){
+        sign = key;
+        out.textContent = sign
+        console.log(a, b, sign)
+        return
+    }
 
-
-function add(num1, num2) {
-    let firstNumber, secondNumber, operator;
-    return num1 + num2
-}
-function subtract(num1, num2) {
-    let firstNumber, secondNumber, operator;
-    return num1 - num2
-    
-}
-function multiply(num1, num2) {
-    let firstNumber, secondNumber, operator;
-    return Math.round(num1 * num2 * 100) / 100
-    
-    
-}
-function divide(num1, num2) {
-    let firstNumber, secondNumber, operator;
-    return Math.round(num1 / num2 * 100) / 100
-    
-}
-
-function operate() {
-    
-    add(1, 2)
-}
+    if( key === '='){
+        if(b === '') b = a;
+        switch(sign) {
+            case "+":
+                a = (+a) + (+b);
+                break;
+            case "-":
+                a = a - b;
+                break;
+            case "*":
+                a = a * b;
+                break;
+            case "/":
+                if(b === '0') {
+                    out.textContent = 'Ошибка';
+                    a = '';
+                    b = '';
+                    sign = '';
+                    return;
+                }
+                a = a / b;
+                break;
+            case "%":
+                a = a % b;        
+        }   
+        finish = true;
+        out.textContent = a;
+        console.log(a, b ,sign)
+    }
+};
 
